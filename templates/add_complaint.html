@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1 class="form-title"><i class="fas fa-bullhorn"></i> Добавить новую жалобу</h1>
+
+        <form method="POST" action="{{ url_for('add_complaint') }}" enctype="multipart/form-data" class="complaint-form">
+            <div class="form-group">
+                <label for="title"><i class="fas fa-heading"></i> Заголовок жалобы*</label>
+                <input type="text" id="title" name="title" class="form-control"
+                       placeholder="Например: Яма на дороге" required maxlength="200">
+                <small class="form-text">Кратко опишите проблему</small>
+            </div>
+
+            <div class="form-group">
+                <label for="description"><i class="fas fa-align-left"></i> Подробное описание*</label>
+                <textarea id="description" name="description" class="form-control"
+                          rows="5" placeholder="Опишите проблему подробно..." required></textarea>
+                <small class="form-text">Чем подробнее описание, тем быстрее решат проблему</small>
+            </div>
+
+            <div class="form-group">
+                <label for="address"><i class="fas fa-map-marker-alt"></i> Адрес проблемы</label>
+                <input type="text" id="address" name="address" class="form-control"
+                       placeholder="Улица, дом, район">
+                <small class="form-text">Укажите точное место</small>
+            </div>
+
+            <div class="form-group">
+                <label for="category"><i class="fas fa-tags"></i> Категория</label>
+                <select id="category" name="category" class="form-control">
+                    <option value="Дороги">Дороги и асфальт</option>
+                    <option value="Освещение">Уличное освещение</option>
+                    <option value="Мусор">Мусор и уборка</option>
+                    <option value="Вода">Водоснабжение</option>
+                    <option value="Транспорт">Общественный транспорт</option>
+                    <option value="Другое">Другое</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="photo"><i class="fas fa-camera"></i> Фотография проблемы</label>
+                <input type="file" id="photo" name="photo" class="form-control-file" accept="image/*">
+                <small class="form-text">Загрузите фото проблемы (до 16MB, JPG/PNG)</small>
+
+                <div class="image-preview" id="imagePreview">
+                    <img src="" alt="Предпросмотр" class="preview-image">
+                    <span class="preview-text">Предпросмотр фото</span>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Отправить жалобу
+                </button>
+                <a href="{{ url_for('index') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+
+            <div class="form-note">
+                <p><i class="fas fa-info-circle"></i> После отправки жалоба будет проверена модератором и появится в общем списке.</p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Предпросмотр фото
+const photoInput = document.getElementById('photo');
+const previewContainer = document.getElementById('imagePreview');
+const previewImage = previewContainer.querySelector('.preview-image');
+const previewText = previewContainer.querySelector('.preview-text');
+
+photoInput.addEventListener('change', function() {
+    const file = this.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        previewText.style.display = 'none';
+        previewImage.style.display = 'block';
+
+        reader.addEventListener('load', function() {
+            previewImage.setAttribute('src', this.result);
+        });
+
+        reader.readAsDataURL(file);
+    } else {
+        previewText.style.display = null;
+        previewImage.style.display = null;
+        previewImage.setAttribute('src', '');
+    }
+});
+</script>
+{% endblock %}

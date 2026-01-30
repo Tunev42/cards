@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Шапка с поиском и кнопкой -->
+    <div class="header-actions">
+        <div class="search-box">
+            <form method="GET" action="{{ url_for('index') }}">
+                <input type="text" name="search" placeholder="Поиск жалоб..."
+                       value="{{ request.args.get('search', '') }}">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+
+        <a href="{{ url_for('add_complaint') }}" class="add-complaint-btn">
+            <i class="fas fa-plus"></i> Добавить жалобу
+        </a>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filters">
+        <a href="{{ url_for('index') }}" class="filter-btn {{ 'active' if not category }}">Все</a>
+        <a href="{{ url_for('index', category='Дороги') }}" class="filter-btn {{ 'active' if category == 'Дороги' }}">Дороги</a>
+        <a href="{{ url_for('index', category='Освещение') }}" class="filter-btn {{ 'active' if category == 'Освещение' }}">Освещение</a>
+        <a href="{{ url_for('index', category='Мусор') }}" class="filter-btn {{ 'active' if category == 'Мусор' }}">Мусор</a>
+        <a href="{{ url_for('index', category='Вода') }}" class="filter-btn {{ 'active' if category == 'Вода' }}">Вода</a>
+    </div>
+
+    <!-- Список жалоб -->
+    <div class="complaints-list">
+        {% if complaints %}
+            {% for complaint in complaints %}
+            <div class="complaint-card">
+                <div class="complaint-header">
+                    <span class="complaint-category">{{ complaint.category }}</span>
+                    <span class="complaint-status {{ complaint.status|lower|replace(' ', '-') }}">
+                        {{ complaint.status }}
+                    </span>
+                    <span class="complaint-date">
+                        {{ complaint.created_at.strftime('%d.%m.%Y') }}
+                    </span>
+                </div>
+
+                <h3 class="complaint-title">{{ complaint.title }}</h3>
+
+                <p class="complaint-description">{{ complaint.description }}</p>
+
+                {% if complaint.address %}
+                <p class="complaint-address">
+                    <i class="fas fa-map-marker-alt"></i> {{ complaint.address }}
+                </p>
+                {% endif %}
+
+                {% if complaint.photo %}
+                <div class="complaint-photo">
+                    <img src="{{ url_for('static', filename='uploads/' + complaint.photo) }}"
+                         alt="Фото проблемы" onclick="openModal(this.src)">
+                </div>
+                {% endif %}
+
+                <div class="complaint-footer">
+                    <button class="vote-btn" onclick="vote({{ complaint.id }})">
+                        <i class="fas fa-thumbs-up"></i> Поддержать
+                        <span class="vote-count" id="votes-{{ complaint.id }}">{{ complaint.votes }}</span>
+                    </button>
+
+                    <a href="{{ url_for('complaint_detail', id=complaint.id) }}" class="details-btn">
+                        <i class="fas fa-comment"></i> Комментарии
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-complaints">
+                <i class="fas fa-inbox"></i>
+                <h3>Жалоб пока нет</h3>
+                <p>Будьте первым, кто сообщит о проблеме!</p>
+                <a href="{{ url_for('add_complaint') }}" class="btn-primary">
+                    <i class="fas fa-plus"></i> Добавить первую жалобу
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Пагинация -->
+    {% if complaints %}
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('index', page=page-1, search=request.args.get('search'), category=category) }}">
+            <i class="fas fa-chevron-left"></i> Назад
+        </a>
+        {% endif %}
+
+        <span class="page-info">Страница {{ page }} из {{ total_pages }}</span>
+
+        {% if page < total_pages %}
+        <a href="{{ url_for('index', page=page+1, search=request.args.get('search'), category=category) }}">
+            Вперед <i class="fas fa-chevron-right"></i>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Модальное окно для фото -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+// Голосование
+function vote(complaintId) {
+    fetch('/vote/' + complaintId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const voteCount = document.getElementById('votes-' + complaintId);
+            voteCount.textContent = data.new_count;
+
+            // Анимация
+            const btn = voteCount.closest('.vote-btn');
+            btn.style.backgroundColor = '#2ecc71';
+            setTimeout(() => {
+                btn.style.backgroundColor = '';
+            }, 500);
+        } else {
+            alert(data.message || 'Ошибка голосования');
+        }
+    });
+}
+
+// Модальное окно для фото
+function openModal(src) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = src;
+}
+
+function closeModal() {
+    document.getElementById('imageModal').style.display = "none";
+}
+
+// Закрыть модальное окно при клике вне изображения
+window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+{% endblock %}
