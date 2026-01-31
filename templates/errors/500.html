@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Внутренняя ошибка сервера{% endblock %}
+
+{% block content %}
+<div class="container error-page">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-server fa-5x"></i>
+        </div>
+
+        <h1 class="error-code">500</h1>
+        <h2 class="error-title">Внутренняя ошибка сервера</h2>
+
+        <div class="error-message">
+            <p>На сервере произошла непредвиденная ошибка.</p>
+            <p>Мы уже работаем над решением проблемы. Пожалуйста, попробуйте позже.</p>
+        </div>
+
+        <div class="error-status">
+            <div class="status-item">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Состояние сервера: <strong>ОШИБКА</strong></span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-clock"></i>
+                <span>Время ошибки: {{ now.strftime('%H:%M:%S') if now else 'N/A' }}</span>
+            </div>
+            <div class="status-item">
+                <i class="fas fa-calendar"></i>
+                <span>Дата: {{ now.strftime('%d.%m.%Y') if now else 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="error-actions">
+            <a href="{{ url_for('index') }}" class="btn-primary">
+                <i class="fas fa-home"></i> На главную
+            </a>
+            <button onclick="window.location.reload()" class="btn-secondary">
+                <i class="fas fa-redo"></i> Обновить страницу
+            </button>
+            <a href="javascript:history.back()" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+
+        <div class="recovery-steps">
+            <h3><i class="fas fa-stethoscope"></i> Что можно попробовать:</h3>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Обновить страницу</h4>
+                    <p>Нажмите F5 или кнопку "Обновить страницу"</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Подождать несколько минут</h4>
+                    <p>Возможно, проблема временная и скоро будет исправлена</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Очистить кэш браузера</h4>
+                    <p>Иногда помогает очистка кэша и cookies</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h4>Попробовать другой браузер</h4>
+                    <p>Проверьте, возникает ли ошибка в другом браузере</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="error-report">
+            <h4><i class="fas fa-bug"></i> Сообщить об ошибке</h4>
+            <p>Если ошибка повторяется, пожалуйста, сообщите нам о ней:</p>
+
+            <form class="report-form" id="reportForm">
+                <div class="form-group">
+                    <label for="reportEmail">Ваш email (для ответа)</label>
+                    <input type="email" id="reportEmail" class="form-control"
+                           placeholder="example@mail.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="reportDescription">Что вы делали, когда произошла ошибка?</label>
+                    <textarea id="reportDescription" class="form-control" rows="3"
+                              placeholder="Опишите ваши действия..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required>
+                        <span>Отправить техническую информацию об ошибке</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-report">
+                    <i class="fas fa-paper-plane"></i> Отправить отчёт
+                </button>
+            </form>
+        </div>
+
+        <div class="system-info" style="display: none;">
+            <h4><i class="fas fa-terminal"></i> Техническая информация:</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">URL:</span>
+                    <span class="info-value">{{ request.url }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Метод:</span>
+                    <span class="info-value">{{ request.method }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Код ошибки:</span>
+                    <span class="info-value">500 Internal Server Error</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">User Agent:</span>
+                    <span class="info-value">{{ request.user_agent }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="error-illustration">
+        <div class="server-room">
+            <div class="server-rack">
+                <div class="server led red"></div>
+                <div class="server led red"></div>
+                <div class="server led red"></div>
+                <div class="server led red"></div>
+            </div>
+            <div class="server-status">
+                <div class="status-text">ERROR</div>
+                <div class="status-lights">
+                    <div class="light red blinking"></div>
+                    <div class="light red blinking"></div>
+                    <div class="light red blinking"></div>
+                </div>
+            </div>
+            <div class="error-message-box">
+                <div class="message-text">SYSTEM FAILURE</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Анимация мигающих лампочек
+document.addEventListener('DOMContent
