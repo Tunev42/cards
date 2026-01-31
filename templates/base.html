@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал жалоб - {% block title %}Главная{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fas fa-bullhorn"></i> ПорталЖалоб
+            </a>
+
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Главная
+                </a>
+                <a href="{{ url_for('add_complaint') }}" class="nav-link {% if request.endpoint == 'add_complaint' %}active{% endif %}">
+                    <i class="fas fa-plus"></i> Добавить
+                </a>
+
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('profile') }}" class="nav-link">
+                        <i class="fas fa-user"></i> {{ session['username'] }}
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Сообщения flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                        <span class="close-flash" onclick="this.parentElement.style.display='none'">&times;</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>© 2023 Портал жалоб. Просто выберите категорию проблемы</p>
+        <p class="footer-note">
+            <i class="fas fa-info-circle"></i>
+            Для фильтрации жалоб используйте кнопки категорий и статусов выше
+        </p>
+    </footer>
+
+    <script>
+        // Автоматическое скрытие flash-сообщений через 5 секунд
+        setTimeout(() => {
+            const flashes = document.querySelectorAll('.flash');
+            flashes.forEach(flash => {
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
