@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1 class="form-title"><i class="fas fa-plus-circle"></i> Добавить жалобу</h1>
+
+        <form method="POST" action="{{ url_for('add_complaint') }}" enctype="multipart/form-data" class="complaint-form">
+            <div class="form-group">
+                <label for="title"><i class="fas fa-heading"></i> Заголовок жалобы*</label>
+                <input type="text" id="title" name="title" class="form-control"
+                       placeholder="Кратко опишите проблему" required maxlength="200">
+            </div>
+
+            <div class="form-group">
+                <label for="description"><i class="fas fa-align-left"></i> Подробное описание*</label>
+                <textarea id="description" name="description" class="form-control"
+                          rows="5" placeholder="Опишите проблему подробно..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="address"><i class="fas fa-map-marker-alt"></i> Адрес проблемы</label>
+                <input type="text" id="address" name="address" class="form-control"
+                       placeholder="Улица, дом, район">
+            </div>
+
+            <div class="form-group">
+                <label for="category_id"><i class="fas fa-tags"></i> Категория проблемы</label>
+                <div class="category-options">
+                    {% for category in categories %}
+                    <label class="category-option"
+                           style="border-color: {{ category.color }};
+                                  {% if loop.first %}border-color: {{ category.color }} 3px solid;{% endif %}">
+                        <input type="radio" name="category_id" value="{{ category.id }}"
+                               {% if loop.first %}checked{% endif %}>
+                        <div class="category-info">
+                            <i class="{{ category.icon }}" style="color: {{ category.color }}"></i>
+                            <span>{{ category.name }}</span>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="photo"><i class="fas fa-camera"></i> Фотография проблемы</label>
+                <input type="file" id="photo" name="photo" class="form-control" accept="image/*">
+                <small>Максимальный размер: 5MB. Допустимые форматы: JPG, PNG, GIF</small>
+            </div>
+
+            <div class="form-note">
+                <p><i class="fas fa-info-circle"></i> После отправки ваша жалоба получит статус "Новая".
+                Администратор проверит её и изменит статус при необходимости.</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Отправить жалобу
+                </button>
+                <a href="{{ url_for('index') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

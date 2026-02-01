@@ -1,0 +1,980 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="edit-profile-page">
+        <!-- Заголовок и навигация -->
+        <div class="page-header">
+            <h1><i class="fas fa-user-edit"></i> Редактирование профиля</h1>
+            <div class="breadcrumb">
+                <a href="{{ url_for('profile') }}"><i class="fas fa-user"></i> Профиль</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Редактирование</span>
+            </div>
+        </div>
+
+        <div class="edit-profile-content">
+            <!-- Боковая навигация -->
+            <div class="sidebar">
+                <div class="sidebar-menu">
+                    <button class="sidebar-item active" onclick="showSection('personal')">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Личные данные</span>
+                    </button>
+
+                    <button class="sidebar-item" onclick="showSection('security')">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Безопасность</span>
+                    </button>
+
+                    <button class="sidebar-item" onclick="showSection('notifications')">
+                        <i class="fas fa-bell"></i>
+                        <span>Уведомления</span>
+                    </button>
+
+                    <button class="sidebar-item" onclick="showSection('privacy')">
+                        <i class="fas fa-eye"></i>
+                        <span>Приватность</span>
+                    </button>
+
+                    <button class="sidebar-item" onclick="showSection('danger')">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Опасная зона</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-info">
+                    <div class="info-card">
+                        <h3><i class="fas fa-info-circle"></i> Советы</h3>
+                        <ul>
+                            <li>Регулярно меняйте пароль</li>
+                            <li>Используйте сложные пароли</li>
+                            <li>Проверяйте настройки приватности</li>
+                            <li>Сохраняйте изменения перед выходом</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основная форма -->
+            <div class="main-content">
+                <!-- Форма личных данных -->
+                <form method="POST" action="{{ url_for('edit_profile') }}" class="profile-form" id="personalForm">
+                    <div class="form-section active" id="personalSection">
+                        <div class="section-header">
+                            <h2><i class="fas fa-user-circle"></i> Личные данные</h2>
+                            <p>Обновите информацию о себе</p>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username">
+                                    <i class="fas fa-user"></i> Имя пользователя *
+                                </label>
+                                <input type="text" id="username" name="username"
+                                       class="form-control" value="{{ user.username }}"
+                                       required readonly>
+                                <small class="form-text">Имя пользователя нельзя изменить</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fas fa-envelope"></i> Email
+                                </label>
+                                <input type="email" id="email" name="email"
+                                       class="form-control" value="{{ user.email or '' }}"
+                                       placeholder="example@mail.com">
+                                <small class="form-text">Email для уведомлений</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="full_name">
+                                <i class="fas fa-id-card"></i> Полное имя (необязательно)
+                            </label>
+                            <input type="text" id="full_name" name="full_name"
+                                   class="form-control" placeholder="Иван Иванов">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">
+                                <i class="fas fa-phone"></i> Телефон (необязательно)
+                            </label>
+                            <input type="tel" id="phone" name="phone"
+                                   class="form-control" placeholder="+7 (999) 123-45-67">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="about">
+                                <i class="fas fa-edit"></i> О себе
+                            </label>
+                            <textarea id="about" name="about" class="form-control"
+                                      rows="4" placeholder="Расскажите немного о себе..."></textarea>
+                            <small class="form-text">Не более 500 символов</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">
+                                <i class="fas fa-map-marker-alt"></i> Местоположение
+                            </label>
+                            <input type="text" id="location" name="location"
+                                   class="form-control" placeholder="Город, страна">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">
+                                <i class="fas fa-save"></i> Сохранить изменения
+                            </button>
+                            <a href="{{ url_for('profile') }}" class="btn-cancel">
+                                <i class="fas fa-times"></i> Отмена
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Форма смены пароля -->
+                <div class="form-section" id="securitySection">
+                    <div class="section-header">
+                        <h2><i class="fas fa-shield-alt"></i> Безопасность</h2>
+                        <p>Управление паролем и безопасностью аккаунта</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('edit_profile') }}" class="security-form">
+                        <div class="form-group">
+                            <label for="current_password">
+                                <i class="fas fa-lock"></i> Текущий пароль *
+                            </label>
+                            <input type="password" id="current_password" name="current_password"
+                                   class="form-control" required>
+                            <small class="form-text">Для подтверждения изменений</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="new_password">
+                                    <i class="fas fa-key"></i> Новый пароль *
+                                </label>
+                                <input type="password" id="new_password" name="new_password"
+                                       class="form-control" required minlength="6">
+                                <div class="password-strength">
+                                    <div class="strength-bar"></div>
+                                    <small class="strength-text">Надёжность пароля</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm_password">
+                                    <i class="fas fa-key"></i> Подтвердите пароль *
+                                </label>
+                                <input type="password" id="confirm_password" name="confirm_password"
+                                       class="form-control" required minlength="6">
+                                <small id="passwordMatch" class="form-text"></small>
+                            </div>
+                        </div>
+
+                        <div class="password-requirements">
+                            <h4><i class="fas fa-check-circle"></i> Требования к паролю:</h4>
+                            <ul>
+                                <li id="req-length">Минимум 6 символов</li>
+                                <li id="req-upper">Хотя бы одна заглавная буква</li>
+                                <li id="req-digit">Хотя бы одна цифра</li>
+                                <li id="req-special">Хотя бы один специальный символ (!@#$%^&*)</li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="logout_other_sessions">
+                                <span>Завершить все другие сессии</span>
+                            </label>
+                            <small class="form-text">Выйдет из всех устройств, кроме этого</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save" name="change_password">
+                                <i class="fas fa-key"></i> Сменить пароль
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Настройки уведомлений -->
+                <div class="form-section" id="notificationsSection">
+                    <div class="section-header">
+                        <h2><i class="fas fa-bell"></i> Уведомления</h2>
+                        <p>Настройте, как вы хотите получать уведомления</p>
+                    </div>
+
+                    <form class="notifications-form">
+                        <div class="notification-category">
+                            <h3><i class="fas fa-bullhorn"></i> Уведомления о жалобах</h3>
+
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Новые комментарии</h4>
+                                    <p>Уведомлять о новых комментариях к вашим жалобам</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Изменение статуса</h4>
+                                    <p>Уведомлять об изменении статуса ваших жалоб</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Новые голоса</h4>
+                                    <p>Уведомлять, когда кто-то поддерживает вашу жалобу</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="notification-category">
+                            <h3><i class="fas fa-envelope"></i> Email уведомления</h3>
+
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Еженедельный отчёт</h4>
+                                    <p>Получать сводку о вашей активности за неделю</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="notification-item">
+                                <div class="notification-info">
+                                    <h4>Новости портала</h4>
+                                    <p>Получать информацию об обновлениях и нововведениях</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notification_frequency">
+                                <i class="fas fa-clock"></i> Частота уведомлений
+                            </label>
+                            <select id="notification_frequency" class="form-control">
+                                <option value="immediate">Мгновенно</option>
+                                <option value="hourly">Каждый час</option>
+                                <option value="daily" selected>Раз в день</option>
+                                <option value="weekly">Раз в неделю</option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-save" onclick="saveNotifications()">
+                                <i class="fas fa-save"></i> Сохранить настройки
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Настройки приватности -->
+                <div class="form-section" id="privacySection">
+                    <div class="section-header">
+                        <h2><i class="fas fa-eye"></i> Приватность</h2>
+                        <p>Контролируйте, кто может видеть вашу информацию</p>
+                    </div>
+
+                    <form class="privacy-form">
+                        <div class="privacy-category">
+                            <h3><i class="fas fa-user-secret"></i> Видимость профиля</h3>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Публичный профиль</h4>
+                                    <p>Ваш профиль виден всем пользователям</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Показывать email</h4>
+                                    <p>Отображать ваш email в профиле</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Показывать статистику</h4>
+                                    <p>Отображать вашу статистику другим пользователям</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="privacy-category">
+                            <h3><i class="fas fa-comments"></i> Жалобы и комментарии</h3>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Анонимные жалобы</h4>
+                                    <p>Скрывать ваше имя при добавлении жалоб</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Анонимные комментарии</h4>
+                                    <p>Скрывать ваше имя при комментировании</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Разрешить комментарии</h4>
+                                    <p>Разрешить другим пользователям комментировать ваши жалобы</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="privacy-category">
+                            <h3><i class="fas fa-search"></i> Поиск и индексация</h3>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Индексация в поисковиках</h4>
+                                    <p>Позволить поисковым системам индексировать ваш профиль</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="privacy-item">
+                                <div class="privacy-info">
+                                    <h4>Поиск по email</h4>
+                                    <p>Позволить другим пользователям искать вас по email</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-save" onclick="savePrivacySettings()">
+                                <i class="fas fa-save"></i> Сохранить настройки
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Опасная зона -->
+                <div class="form-section" id="dangerSection">
+                    <div class="section-header danger-header">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Опасная зона</h2>
+                        <p>Действия, которые нельзя отменить</p>
+                    </div>
+
+                    <div class="danger-actions">
+                        <div class="danger-action">
+                            <div class="danger-info">
+                                <h4><i class="fas fa-trash-alt"></i> Удалить все жалобы</h4>
+                                <p>Безвозвратно удалит все ваши жалобы и комментарии</p>
+                            </div>
+                            <button class="btn-danger" onclick="showDeleteComplaintsModal()">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+
+                        <div class="danger-action">
+                            <div class="danger-info">
+                                <h4><i class="fas fa-ban"></i> Деактивировать аккаунт</h4>
+                                <p>Скрывает ваш профиль, но сохраняет данные для восстановления</p>
+                            </div>
+                            <button class="btn-danger" onclick="showDeactivateModal()">
+                                <i class="fas fa-ban"></i> Деактивировать
+                            </button>
+                        </div>
+
+                        <div class="danger-action">
+                            <div class="danger-info">
+                                <h4><i class="fas fa-skull-crossbones"></i> Удалить аккаунт</h4>
+                                <p>Полностью удаляет ваш аккаунт и все данные без возможности восстановления</p>
+                            </div>
+                            <button class="btn-danger" onclick="showDeleteAccountModal()">
+                                <i class="fas fa-skull"></i> Удалить аккаунт
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="danger-warning">
+                        <div class="warning-icon">
+                            <i class="fas fa-exclamation-circle fa-2x"></i>
+                        </div>
+                        <div class="warning-content">
+                            <h3>Внимание!</h3>
+                            <p>Действия в этом разделе необратимы. Убедитесь, что вы понимаете последствия.</p>
+                            <p>Рекомендуем сделать резервную копию важных данных перед выполнением этих действий.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальные окна для опасных действий -->
+<div id="deleteComplaintsModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Удаление всех жалоб</h3>
+            <span class="close" onclick="closeModal('deleteComplaintsModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Вы уверены, что хотите удалить все ваши жалобы?</p>
+            <p><strong>Это действие необратимо!</strong></p>
+            <ul>
+                <li>Все ваши жалобы будут удалены</li>
+                <li>Все комментарии к вашим жалобам будут удалены</li>
+                <li>Фотографии будут удалены с сервера</li>
+                <li>Статистика будет сброшена</li>
+            </ul>
+            <div class="confirmation">
+                <label>
+                    <input type="checkbox" id="confirmDeleteComplaints">
+                    <span>Я понимаю последствия и хочу продолжить</span>
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('deleteComplaintsModal')">
+                <i class="fas fa-times"></i> Отмена
+            </button>
+            <button class="btn-danger-confirm" onclick="deleteAllComplaints()" disabled>
+                <i class="fas fa-trash"></i> Удалить все жалобы
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="deactivateModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-ban"></i> Деактивация аккаунта</h3>
+            <span class="close" onclick="closeModal('deactivateModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Что произойдёт при деактивации:</p>
+            <ul>
+                <li>Ваш профиль станет невидимым для других пользователей</li>
+                <li>Ваши жалобы останутся, но будут анонимными</li>
+                <li>Вы не сможете входить в аккаунт</li>
+                <li>Данные сохранятся для возможного восстановления</li>
+                <li>Аккаунт можно восстановить в течение 30 дней</li>
+            </ul>
+            <div class="form-group">
+                <label for="deactivateReason">Причина деактивации (необязательно)</label>
+                <textarea id="deactivateReason" class="form-control" rows="3"
+                          placeholder="Почему вы хотите деактивировать аккаунт?"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('deactivateModal')">
+                <i class="fas fa-times"></i> Отмена
+            </button>
+            <button class="btn-danger-confirm" onclick="deactivateAccount()">
+                <i class="fas fa-ban"></i> Деактивировать аккаунт
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteAccountModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-skull-crossbones"></i> Удаление аккаунта</h3>
+            <span class="close" onclick="closeModal('deleteAccountModal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p><strong>ВНИМАНИЕ: Это действие НЕОБРАТИМО!</strong></p>
+            <p>После удаления аккаунта:</p>
+            <ul>
+                <li>Весь ваш профиль будет удалён</li>
+                <li>Все ваши жалобы будут удалены</li>
+                <li>Все ваши комментарии будут удалены</li>
+                <li>Все фотографии будут удалены с сервера</li>
+                <li>Вся статистика будет удалена</li>
+                <li><strong>Восстановление невозможно!</strong></li>
+            </ul>
+
+            <div class="confirmation">
+                <label>
+                    <input type="checkbox" id="confirmDeleteAccount1">
+                    <span>Я понимаю, что все мои данные будут удалены</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="confirmDeleteAccount2">
+                    <span>Я понимаю, что восстановление невозможно</span>
+                </label>
+                <label>
+                    <input type="checkbox" id="confirmDeleteAccount3">
+                    <span>Я подтверждаю удаление аккаунта</span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="deletePassword">Введите ваш пароль для подтверждения *</label>
+                <input type="password" id="deletePassword" class="form-control" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('deleteAccountModal')">
+                <i class="fas fa-times"></i> Отмена
+            </button>
+            <button class="btn-danger-confirm" onclick="deleteAccount()" disabled>
+                <i class="fas fa-skull"></i> Удалить аккаунт навсегда
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Переключение между разделами
+function showSection(sectionId) {
+    // Скрыть все разделы
+    document.querySelectorAll('.form-section').forEach(section => {
+        section.classList.remove('active');
+    });
+
+    // Показать выбранный раздел
+    document.getElementById(sectionId + 'Section').classList.add('active');
+
+    // Обновить активный элемент в сайдбаре
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.currentTarget.classList.add('active');
+}
+</script>
+// Проверка пароля
+function checkPasswordStrength(password) {
+    let strength = 0;
+    const bar = document.querySelector('.strength-bar');
+    const text = document.querySelector('.strength-text');
+
+    // Длина
+    if (password.length >= 8) strength += 1;
+    if (password.length >= 12) strength += 1;
+
+    // Сложность
+    if (/[A-Z]/.test(password)) strength += 1;
+    if (/[0-9]/.test(password)) strength += 1;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+    // Обновляем индикатор
+    const width = Math.min(strength * 20, 100);
+    bar.style.width = width + '%';
+
+    // Цвет и текст
+    if (strength <= 2) {
+        bar.style.backgroundColor = '#e74c3c';
+        text.textContent = 'Слабый';
+        text.style.color = '#e74c3c';
+    } else if (strength <= 3) {
+        bar.style.backgroundColor = '#f39c12';
+        text.textContent = 'Средний';
+        text.style.color = '#f39c12';
+    } else {
+        bar.style.backgroundColor = '#27ae60';
+        text.textContent = 'Сильный';
+        text.style.color = '#27ae60';
+    }
+
+    // Проверка требований
+    updateRequirement('req-length', password.length >= 6);
+    updateRequirement('req-upper', /[A-Z]/.test(password));
+    updateRequirement('req-digit', /[0-9]/.test(password));
+    updateRequirement('req-special', /[^A-Za-z0-9]/.test(password));
+}
+
+function updateRequirement(id, met) {
+    const element = document.getElementById(id);
+    if (met) {
+        element.style.color = '#27ae60';
+        element.innerHTML = '✓ ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+    } else {
+        element.style.color = '#e74c3c';
+        element.innerHTML = '✗ ' + element.textContent.replace('✓ ', '').replace('✗ ', '');
+    }
+}
+
+// Проверка совпадения паролей
+function checkPasswordMatch() {
+    const password = document.getElementById('new_password');
+    const confirm = document.getElementById('confirm_password');
+    const matchText = document.getElementById('passwordMatch');
+
+    if (!password || !confirm) return;
+
+    if (confirm.value.length === 0) {
+        matchText.textContent = '';
+        return;
+    }
+
+    if (password.value === confirm.value) {
+        matchText.textContent = '✓ Пароли совпадают';
+        matchText.style.color = '#27ae60';
+    } else {
+        matchText.textContent = '✗ Пароли не совпадают';
+        matchText.style.color = '#e74c3c';
+    }
+}
+
+// Управление модальными окнами
+function showDeleteComplaintsModal() {
+    document.getElementById('deleteComplaintsModal').style.display = 'block';
+}
+
+function showDeactivateModal() {
+    document.getElementById('deactivateModal').style.display = 'block';
+}
+
+function showDeleteAccountModal() {
+    document.getElementById('deleteAccountModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Подтверждение удаления жалоб
+document.getElementById('confirmDeleteComplaints')?.addEventListener('change', function() {
+    document.querySelector('#deleteComplaintsModal .btn-danger-confirm').disabled = !this.checked;
+});
+
+// Подтверждение удаления аккаунта
+function checkAccountDeletion() {
+    const check1 = document.getElementById('confirmDeleteAccount1');
+    const check2 = document.getElementById('confirmDeleteAccount2');
+    const check3 = document.getElementById('confirmDeleteAccount3');
+    const button = document.querySelector('#deleteAccountModal .btn-danger-confirm');
+
+    if (check1 && check2 && check3 && button) {
+        button.disabled = !(check1.checked && check2.checked && check3.checked);
+    }
+}
+
+document.getElementById('confirmDeleteAccount1')?.addEventListener('change', checkAccountDeletion);
+document.getElementById('confirmDeleteAccount2')?.addEventListener('change', checkAccountDeletion);
+document.getElementById('confirmDeleteAccount3')?.addEventListener('change', checkAccountDeletion);
+
+// Действия
+function deleteAllComplaints() {
+    if (confirm('Точно удалить все жалобы?')) {
+        alert('Функция удаления жалоб скоро будет доступна');
+        closeModal('deleteComplaintsModal');
+    }
+}
+
+function deactivateAccount() {
+    const reason = document.getElementById('deactivateReason').value;
+    if (confirm('Деактивировать аккаунт?')) {
+        alert('Функция деактивации скоро будет доступна');
+        closeModal('deactivateModal');
+    }
+}
+
+function deleteAccount() {
+    const password = document.getElementById('deletePassword').value;
+    if (!password) {
+        alert('Введите пароль для подтверждения');
+        return;
+    }
+
+    if (confirm('УДАЛИТЬ АККАУНТ НАВСЕГДА? Это действие невозможно отменить!')) {
+        alert('Функция удаления аккаунта скоро будет доступна');
+        closeModal('deleteAccountModal');
+    }
+}
+
+function saveNotifications() {
+    alert('Настройки уведомлений сохранены');
+}
+
+function savePrivacySettings() {
+    alert('Настройки приватности сохранены');
+}
+
+// Вешаем обработчики
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверка пароля
+    const passwordInput = document.getElementById('new_password');
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            checkPasswordMatch();
+        });
+    }
+
+    // Проверка подтверждения пароля
+    const confirmInput = document.getElementById('confirm_password');
+    if (confirmInput) {
+        confirmInput.addEventListener('input', checkPasswordMatch);
+    }
+
+    // Закрытие модальных окон при клике вне их
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    };
+});
+</script>
+
+<style>
+.edit-profile-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.edit-profile-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+    min-height: 800px;
+}
+
+/* Сайдбар */
+.sidebar {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border: none;
+    background: none;
+    text-align: left;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #2c3e50;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.sidebar-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.sidebar-item.active {
+    background: #3498db;
+    color: white;
+}
+
+.sidebar-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-info {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.info-card {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.info-card h3 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-card ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+.info-card li {
+    margin-bottom: 5px;
+}
+
+/* Основной контент */
+.main-content {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    padding: 30px;
+}
+
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.section-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.section-header h2 {
+    color: #2c3e50;
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-header p {
+    color: #7f8c8d;
+    margin: 0;
+}
+
+.danger-header h2 {
+    color: #e74c3c;
+}
+
+/* Формы */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-text {
+    display: block;
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Индикатор силы пароля */
+.password-strength {
+    margin-top: 10px;
+    height: 5px;
+    background-color: #ecf0f1;
+}

@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="contact-page">
+        <div class="contact-header">
+            <h1><i class="fas fa-address-book"></i> Контакты</h1>
+            <p class="lead">Свяжитесь с нами любым удобным способом</p>
+        </div>
+
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope fa-2x"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Электронная почта</h3>
+                        <p>Для общих вопросов:</p>
+                        <a href="mailto:support@portal-жалоб.рф" class="contact-link">
+                            support@portal-жалоб.рф
+                        </a>
+                        <p>Для сотрудничества:</p>
+                        <a href="mailto:partner@portal-жалоб.рф" class="contact-link">
+                            partner@portal-жалоб.рф
+                        </a>
+                        <p>Для прессы:</p>
+                        <a href="mailto:press@portal-жалоб.рф" class="contact-link">
+                            press@portal-жалоб.рф
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone fa-2x"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Телефоны</h3>
+                        <p>Горячая линия (техподдержка):</p>
+                        <a href="tel:+78001234567" class="contact-link">
+                            <i class="fas fa-phone"></i> 8 (800) 123-45-67
+                        </a>
+                        <p>Время работы:</p>
+                        <p>Пн-Пт: 9:00 - 18:00</p>
+                        <p>Сб-Вс: 10:00 - 16:00</p>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>Офис</h3>
+                        <p>г. Москва, ул. Тверская, д. 10</p>
+                        <p>Бизнес-центр "Тверской"</p>
+                        <p>Этаж 5, офис 512</p>
+                        <div class="map-link">
+                            <a href="https://yandex.ru/maps/-/CDqRBVK1" target="_blank" class="btn-map">
+                                <i class="fas fa-map"></i> Посмотреть на карте
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                    <div class="contact-details">
+                        <h3>График работы</h3>
+                        <p><strong>Приём посетителей:</strong></p>
+                        <p>Понедельник: 10:00 - 13:00</p>
+                        <p>Среда: 14:00 - 17:00</p>
+                        <p>Пятница: 10:00 - 13:00</p>
+                        <p><em>По предварительной записи</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form-section">
+                <h2><i class="fas fa-paper-plane"></i> Форма обратной связи</h2>
+                <p>Заполните форму ниже, и мы ответим вам в течение 24 часов</p>
+
+                <form method="POST" action="/contact" class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Ваше имя *</label>
+                        <input type="text" id="name" name="name" class="form-control" required
+                               placeholder="Иван Иванов">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" class="form-control" required
+                                   placeholder="ivan@example.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Телефон</label>
+                            <input type="tel" id="phone" name="phone" class="form-control"
+                                   placeholder="+7 (999) 123-45-67">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="topic">Тема обращения *</label>
+                        <select id="topic" name="topic" class="form-control" required>
+                            <option value="">Выберите тему</option>
+                            <option value="technical">Техническая поддержка</option>
+                            <option value="complaint">Вопрос по жалобе</option>
+                            <option value="suggestions">Предложения по улучшению</option>
+                            <option value="cooperation">Сотрудничество</option>
+                            <option value="media">СМИ и пресса</option>
+                            <option value="other">Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Сообщение *</label>
+                        <textarea id="message" name="message" class="form-control" rows="6" required
+                                  placeholder="Опишите вашу проблему или вопрос..."></textarea>
+                        <small>Максимум 2000 символов</small>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="captcha">
+                            <label for="captcha">Сколько будет 2 + 2? *</label>
+                            <input type="text" id="captcha" name="captcha" class="form-control" required
+                                   placeholder="Ответ">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="agreement" required>
+                            <span>Я согласен с обработкой персональных данных</span>
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i> Отправить сообщение
+                        </button>
+                        <button type="reset" class="btn-cancel">
+                            <i class="fas fa-eraser"></i> Очистить форму
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="faq-section">
+                <h2><i class="fas fa-question-circle"></i> Частые вопросы</h2>
+
+                <div class="faq-item">
+                    <h3>Как долго ждать ответ на жалобу?</h3>
+                    <p>Мы передаём жалобы в соответствующие службы в течение 24 часов. Срок ответа от служб зависит от типа проблемы.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Можно ли пожаловаться анонимно?</h3>
+                    <p>Да, вы можете отправить жалобу без регистрации, но тогда вы не сможете отслеживать её статус.</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Как стать волонтёром проекта?</h3>
+                    <p>Напишите нам на volunteer@portal-жалоб.рф с темой "Волонтёрство".</p>
+                </div>
+
+                <div class="faq-item">
+                    <h3>Есть ли мобильное приложение?</h3>
+                    <p>Да, наше приложение доступно в App Store и Google Play. Ищите "Портал жалоб".</p>
+                </div>
+            </div>
+
+            <div class="social-section">
+                <h2><i class="fas fa-share-alt"></i> Мы в социальных сетях</h2>
+                <p>Подписывайтесь на наши соцсети, чтобы быть в курсе новостей</p>
+
+                <div class="social-links">
+                    <a href="#" class="social-link vk">
+                        <i class="fab fa-vk"></i> ВКонтакте
+                    </a>
+                    <a href="#" class="social-link telegram">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </a>
+                    <a href="#" class="social-link youtube">
+                        <i class="fab fa-youtube"></i> YouTube
+                    </a>
+                    <a href="#" class="social-link instagram">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                    <a href="#" class="social-link twitter">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                </div>
+            </div>
+
+            <div class="support-section">
+                <h2><i class="fas fa-heart"></i> Поддержать проект</h2>
+                <p>Наш проект существует благодаря поддержке пользователей. Вы можете помочь нам развиваться:</p>
+
+                <div class="support-options">
+                    <div class="support-option">
+                        <i class="fas fa-hand-holding-usd fa-2x"></i>
+                        <h3>Финансовая поддержка</h3>
+                        <p>Любая сумма помогает улучшать портал</p>
+                        <button class="btn-donate">Поддержать</button>
+                    </div>
+
+                    <div class="support-option">
+                        <i class="fas fa-users fa-2x"></i>
+                        <h3>Стать волонтёром</h3>
+                        <p>Помогите модерацией или разработкой</p>
+                        <a href="mailto:volunteer@portal-жалоб.рф" class="btn-volunteer">Написать</a>
+                    </div>
+
+                    <div class="support-option">
+                        <i class="fas fa-share-alt fa-2x"></i>
+                        <h3>Рассказать друзьям</h3>
+                        <p>Поделитесь ссылкой на портал</p>
+                        <button class="btn-share" onclick="sharePortal()">
+                            <i class="fas fa-share"></i> Поделиться
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function sharePortal() {
+    const shareData = {
+        title: 'Портал жалоб',
+        text: 'Сообщайте о проблемах в городе и следите за их решением',
+        url: window.location.origin
+    };
+
+    if (navigator.share) {
+        navigator.share(shareData);
+    } else {
+        navigator.clipboard.writeText(window.location.origin);
+        alert('Ссылка скопирована в буфер обмена!');
+    }
+}
+</script>
+{% endblock %}

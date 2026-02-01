@@ -1,0 +1,2088 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инфо-город - Портал жалоб и предложений</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Шапка */
+        .header {
+            background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 100%);
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffa502;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .add-complaint-btn {
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s;
+        }
+
+        .add-complaint-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-btn, .register-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .login-btn {
+            background: transparent;
+            border: 2px solid #444;
+            color: #fff;
+        }
+
+        .register-btn {
+            background: linear-gradient(90deg, #1e90ff, #3742fa);
+            border: none;
+            color: white;
+        }
+
+        .login-btn:hover {
+            border-color: #ff4757;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Основной контент */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+            padding: 30px 0;
+        }
+
+        /* Левая панель - фильтры */
+        .sidebar-left {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .filter-section {
+            margin-bottom: 30px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .filter-title i {
+            color: #ffa502;
+        }
+
+        .filter-list {
+            list-style: none;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background-color: #252525;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .filter-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .filter-item.active {
+            background: linear-gradient(90deg, #252525, #333);
+            border-left: 3px solid #ff4757;
+        }
+
+        .filter-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .filter-count {
+            background-color: #333;
+            color: #ffa502;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .filter-item.active .filter-count {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        .sorting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sort-btn {
+            background-color: #252525;
+            border: none;
+            color: #ccc;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sort-btn:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(90deg, #252525, #333);
+            color: #ffa502;
+            border-left: 3px solid #ffa502;
+        }
+
+        /* Центральная часть - жалобы */
+        .content-center {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .search-bar {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            background-color: #252525;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff4757;
+        }
+
+        .search-btn {
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            border: none;
+            color: white;
+            padding: 0 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .complaints-container {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #333;
+            min-height: 400px;
+        }
+
+        .complaints-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .complaint-card {
+            background: linear-gradient(135deg, #252525, #2a2a2a);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #333;
+            transition: all 0.3s;
+            border-left: 4px solid #ff4757;
+        }
+
+        .complaint-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .complaint-category {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .complaint-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .complaint-date {
+            color: #aaa;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .complaint-title {
+            color: #fff;
+            font-size: 20px;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .complaint-description {
+            color: #ccc;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .complaint-address {
+            color: #aaa;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .complaint-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .vote-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .vote-btn:hover {
+            background: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        .vote-count {
+            background: #ff4757;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .complaint-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        .no-complaints {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .no-complaints-icon {
+            font-size: 60px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .no-complaints-title {
+            font-size: 24px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .no-complaints-text {
+            color: #666;
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+            margin: 0 auto 30px;
+        }
+
+        /* Футер */
+        .footer {
+            background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+            padding: 40px 0 20px;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .footer-description {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-column h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 8px;
+        }
+
+        .footer-column a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: #ffa502;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .copyright {
+            color: #aaa;
+        }
+
+        .footer-tip {
+            background-color: #252525;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #333;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: modalAppear 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .modal-header h3 {
+            color: #ffa502;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.3s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .modal-close:hover {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        /* Формы */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #252525;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #1e90ff;
+            box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.2);
+        }
+
+        .form-input.error, .form-textarea.error, .form-select.error {
+            border-color: #ff4757;
+        }
+
+        .error-message {
+            color: #ff4757;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .forgot-password {
+            color: #1e90ff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: #63a4ff;
+        }
+
+        .modal-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            padding: 14px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(90deg, #1e90ff, #3742fa);
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(90deg, #187bdd, #2f36d4);
+            transform: translateY(-2px);
+        }
+
+        .close-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .close-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .switch-form a {
+            color: #1e90ff;
+            text-decoration: none;
+            font-weight: 500;
+            margin-left: 5px;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        /* Категории в модальном окне */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-option {
+            background: #252525;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-option:hover {
+            background: #2a2a2a;
+            transform: translateY(-2px);
+        }
+
+        .category-option.selected {
+            background: linear-gradient(135deg, #252525, #333);
+            border-color: #1e90ff;
+            color: #1e90ff;
+        }
+
+        .category-option i {
+            font-size: 20px;
+        }
+
+        /* Стили для профиля пользователя */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e90ff, #3742fa);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+
+        .logout-btn {
+            background: #333;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-stats {
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .login-btn, .register-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .modal {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">Инфо-город</div>
+                        <div class="logo-subtitle">Портал жалоб и предложений</div>
+                    </div>
+                </div>
+
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalComplaints">1,254</div>
+                        <div class="stat-label">Жалоб всего</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="fixedComplaints">328</div>
+                        <div class="stat-label">Исправлено</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">★ Рейтинг</div>
+                    </div>
+                </div>
+
+                <div class="user-actions">
+                    <button type="button" class="add-complaint-btn" onclick="openModal('addComplaintModal')">
+                        <i class="fas fa-plus-circle"></i>
+                        Добавить жалобу
+                    </button>
+                    <div class="auth-buttons" id="authButtonsContainer">
+                        <button type="button" class="login-btn" onclick="openModal('loginModal')">Войти</button>
+                        <button type="button" class="register-btn" onclick="openModal('registerModal')">Регистрация</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Левая панель - фильтры -->
+            <aside class="sidebar-left">
+                <!-- Категории -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-tags"></i>
+                        Категории
+                    </h3>
+                    <ul class="filter-list">
+                        <li class="filter-item active" onclick="filterComplaints('all')">
+                            <span class="filter-name">
+                                <i class="fas fa-layer-group"></i>
+                                Все категории
+                            </span>
+                            <span class="filter-count" id="count-all">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('roads')">
+                            <span class="filter-name">
+                                <i class="fas fa-road"></i>
+                                Дороги
+                            </span>
+                            <span class="filter-count" id="count-roads">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('garbage')">
+                            <span class="filter-name">
+                                <i class="fas fa-trash"></i>
+                                Мусор
+                            </span>
+                            <span class="filter-count" id="count-garbage">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('lighting')">
+                            <span class="filter-name">
+                                <i class="fas fa-lightbulb"></i>
+                                Освещение
+                            </span>
+                            <span class="filter-count" id="count-lighting">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('water')">
+                            <span class="filter-name">
+                                <i class="fas fa-tint"></i>
+                                Вода
+                            </span>
+                            <span class="filter-count" id="count-water">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('transport')">
+                            <span class="filter-name">
+                                <i class="fas fa-bus"></i>
+                                Транспорт
+                            </span>
+                            <span class="filter-count" id="count-transport">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('housing')">
+                            <span class="filter-name">
+                                <i class="fas fa-building"></i>
+                                ЖКХ
+                            </span>
+                            <span class="filter-count" id="count-housing">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('greenery')">
+                            <span class="filter-name">
+                                <i class="fas fa-tree"></i>
+                                Озеленение
+                            </span>
+                            <span class="filter-count" id="count-greenery">0</span>
+                        </li>
+                        <li class="filter-item" onclick="filterComplaints('other')">
+                            <span class="filter-name">
+                                <i class="fas fa-question-circle"></i>
+                                Другое
+                            </span>
+                            <span class="filter-count" id="count-other">0</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Статусы -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-flag"></i>
+                        Статусы
+                    </h3>
+                    <ul class="filter-list">
+                        <li class="filter-item active" onclick="filterByStatus('all')">
+                            <span class="filter-name">
+                                <i class="fas fa-list"></i>
+                                Все статусы
+                            </span>
+                        </li>
+                        <li class="filter-item" onclick="filterByStatus('new')">
+                            <span class="filter-name">
+                                <i class="fas fa-clock" style="color: #e74c3c"></i>
+                                Новая
+                            </span>
+                        </li>
+                        <li class="filter-item" onclick="filterByStatus('confirmed')">
+                            <span class="filter-name">
+                                <i class="fas fa-check-circle" style="color: #f39c12"></i>
+                                Подтверждена
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Сортировка -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-sort-amount-down"></i>
+                        Сортировка
+                    </h3>
+                    <div class="sorting-options">
+                        <button type="button" class="sort-btn active" onclick="sortComplaints('new')">
+                            <i class="fas fa-fire"></i>
+                            Сначала новые
+                        </button>
+                        <button type="button" class="sort-btn" onclick="sortComplaints('popular')">
+                            <i class="fas fa-star"></i>
+                            Популярные
+                        </button>
+                        <button type="button" class="sort-btn" onclick="sortComplaints('updated')">
+                            <i class="fas fa-sync-alt"></i>
+                            Недавно обновленные
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Центральная часть -->
+            <main class="content-center">
+                <!-- Поиск -->
+                <div class="search-bar">
+                    <div class="search-container">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Поиск жалоб по ключевым словам..." onkeyup="searchComplaints()">
+                        <button type="button" class="search-btn" onclick="searchComplaints()">
+                            <i class="fas fa-search"></i>
+                            Найти
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Список жалоб -->
+                <div class="complaints-container">
+                    <div id="complaintsList" class="complaints-list">
+                        <!-- Жалобы будут добавляться здесь -->
+                    </div>
+                    <div id="noComplaints" class="no-complaints" style="display: none;">
+                        <div class="no-complaints-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3 class="no-complaints-title">Жалоб по выбранным фильтрам нет</h3>
+                        <p class="no-complaints-text">
+                            Попробуйте изменить фильтры или станьте первым, кто добавит жалобу в этой категории.
+                            Ваше мнение поможет улучшить наш город!
+                        </p>
+                        <button type="button" class="add-complaint-btn" onclick="openModal('addComplaintModal')">
+                            <i class="fas fa-plus-circle"></i>
+                            Добавить первую жалобу
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-info">
+                    <div class="footer-logo">Инфо-город</div>
+                    <p class="footer-description">
+                        Платформа для взаимодействия граждан с городскими службами.
+                        Сообщайте о проблемах, отслеживайте статус решений и участвуйте
+                        в улучшении нашего города.
+                    </p>
+                    <p class="copyright">© 2026 Инфо-город. Все права защищены.</p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>О проекте</h4>
+                        <ul>
+                            <li><a href="#" onclick="event.preventDefault()">О нас</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">Как это работает</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">Статистика</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">Новости</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Полезное</h4>
+                        <ul>
+                            <li><a href="#" onclick="event.preventDefault()">Правила</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">FAQ</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">Контакты</a></li>
+                            <li><a href="#" onclick="event.preventDefault()">Поддержка</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-tip">
+                    Для фильтрации жалоб используйте кнопки категорий и статусов
+                </div>
+                <div class="footer-links-row">
+                    <a href="#" onclick="event.preventDefault()">О проекте</a> |
+                    <a href="#" onclick="event.preventDefault()">Правила</a> |
+                    <a href="#" onclick="event.preventDefault()">Контакты</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно добавления жалобы -->
+    <div class="modal-overlay" id="addComplaintModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Новая жалоба</h3>
+                <button type="button" class="modal-close" onclick="closeModal('addComplaintModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addComplaintForm">
+                    <div class="form-group">
+                        <label class="form-label" for="complaintTitle">Заголовок жалобы *</label>
+                        <input type="text" class="form-input" id="complaintTitle" placeholder="Кратко опишите проблему" required maxlength="100">
+                        <div class="error-message" id="titleError">Пожалуйста, введите заголовок (максимум 100 символов)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Категория *</label>
+                        <div class="category-grid">
+                            <div class="category-option" data-category="roads" onclick="selectCategory('roads')">
+                                <i class="fas fa-road"></i>
+                                <span>Дороги</span>
+                            </div>
+                            <div class="category-option" data-category="garbage" onclick="selectCategory('garbage')">
+                                <i class="fas fa-trash"></i>
+                                <span>Мусор</span>
+                            </div>
+                            <div class="category-option" data-category="lighting" onclick="selectCategory('lighting')">
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Освещение</span>
+                            </div>
+                            <div class="category-option" data-category="water" onclick="selectCategory('water')">
+                                <i class="fas fa-tint"></i>
+                                <span>Вода</span>
+                            </div>
+                            <div class="category-option" data-category="transport" onclick="selectCategory('transport')">
+                                <i class="fas fa-bus"></i>
+                                <span>Транспорт</span>
+                            </div>
+                            <div class="category-option" data-category="housing" onclick="selectCategory('housing')">
+                                <i class="fas fa-building"></i>
+                                <span>ЖКХ</span>
+                            </div>
+                            <div class="category-option" data-category="greenery" onclick="selectCategory('greenery')">
+                                <i class="fas fa-tree"></i>
+                                <span>Озеленение</span>
+                            </div>
+                            <div class="category-option" data-category="other" onclick="selectCategory('other')">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Другое</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedCategory">
+                        <div class="error-message" id="categoryError">Пожалуйста, выберите категорию</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="complaintDescription">Описание проблемы *</label>
+                        <textarea class="form-textarea" id="complaintDescription" placeholder="Подробно опишите проблему, укажите детали..." required maxlength="1000"></textarea>
+                        <div class="error-message" id="descriptionError">Пожалуйста, введите описание проблемы (максимум 1000 символов)</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="complaintAddress">Адрес проблемы *</label>
+                            <input type="text" class="form-input" id="complaintAddress" placeholder="Улица, дом, район" required>
+                            <div class="error-message" id="addressError">Пожалуйста, введите адрес</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="complaintDate">Дата обнаружения</label>
+                            <input type="date" class="form-input" id="complaintDate">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="complaintContact">Контактная информация (необязательно)</label>
+                        <input type="text" class="form-input" id="complaintContact" placeholder="Email или телефон для обратной связи">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn submit-btn" onclick="submitComplaint()">
+                    <i class="fas fa-paper-plane"></i> Отправить жалобу
+                </button>
+                <button type="button" class="modal-btn close-btn" onclick="closeModal('addComplaintModal')">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <p style="color: #aaa; font-size: 12px; margin-top: 10px; text-align: center;">
+                    * - обязательные поля для заполнения
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно ВХОДА -->
+    <div class="modal-overlay" id="loginModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-sign-in-alt"></i> Вход в аккаунт</h3>
+                <button type="button" class="modal-close" onclick="closeModal('loginModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" placeholder="Введите ваш email" required>
+                        <div class="error-message" id="loginEmailError">Пожалуйста, введите корректный email</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Пароль</label>
+                        <input type="password" class="form-input" id="loginPassword" placeholder="Введите ваш пароль" required>
+                        <div class="error-message" id="loginPasswordError">Пароль должен содержать не менее 6 символов</div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            Запомнить меня
+                        </label>
+                        <a href="#" class="forgot-password" onclick="showForgotPassword()">Забыли пароль?</a>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn submit-btn" onclick="submitLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Войти
+                </button>
+                <button type="button" class="modal-btn close-btn" onclick="closeModal('loginModal')">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <div class="switch-form">
+                    Нет аккаунта? <a href="#" onclick="switchToRegister()">Зарегистрироваться</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно РЕГИСТРАЦИИ -->
+    <div class="modal-overlay" id="registerModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Регистрация</h3>
+                <button type="button" class="modal-close" onclick="closeModal('registerModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="registerName">Имя</label>
+                        <input type="text" class="form-input" id="registerName" placeholder="Введите ваше имя" required>
+                        <div class="error-message" id="registerNameError">Имя должно содержать не менее 2 символов</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email</label>
+                        <input type="email" class="form-input" id="registerEmail" placeholder="Введите ваш email" required>
+                        <div class="error-message" id="registerEmailError">Пожалуйста, введите корректный email</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Пароль</label>
+                        <input type="password" class="form-input" id="registerPassword" placeholder="Придумайте пароль" required>
+                        <div class="error-message" id="registerPasswordError">Пароль должен содержать не менее 8 символов</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="registerConfirmPassword">Подтверждение пароля</label>
+                        <input type="password" class="form-input" id="registerConfirmPassword" placeholder="Повторите пароль" required>
+                        <div class="error-message" id="registerConfirmPasswordError">Пароли не совпадают</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn submit-btn" onclick="submitRegister()">
+                    <i class="fas fa-user-plus"></i> Зарегистрироваться
+                </button>
+                <button type="button" class="modal-btn close-btn" onclick="closeModal('registerModal')">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+                <div class="switch-form">
+                    Уже есть аккаунт? <a href="#" onclick="switchToLogin()">Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно восстановления пароля -->
+    <div class="modal-overlay" id="forgotPasswordModal" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Восстановление пароля</h3>
+                <button type="button" class="modal-close" onclick="closeModal('forgotPasswordModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="forgotPasswordForm">
+                    <div class="form-group">
+                        <label class="form-label" for="forgotEmail">Email</label>
+                        <input type="email" class="form-input" id="forgotEmail" placeholder="Введите ваш email" required>
+                        <div class="error-message" id="forgotEmailError">Пожалуйста, введите корректный email</div>
+                    </div>
+                    <p style="color: #aaa; font-size: 14px; margin-top: 10px;">
+                        На указанный email будет отправлена ссылка для восстановления пароля.
+                    </p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="modal-btn submit-btn" onclick="submitForgotPassword()">
+                    <i class="fas fa-paper-plane"></i> Отправить
+                </button>
+                <button type="button" class="modal-btn close-btn" onclick="closeModal('forgotPasswordModal')">
+                    <i class="fas fa-times"></i> Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Хранение жалоб
+        let complaints = JSON.parse(localStorage.getItem('complaints')) || [];
+        let currentFilter = 'all';
+        let currentStatus = 'all';
+        let currentSort = 'new';
+        let selectedCategory = '';
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            renderComplaints();
+            updateFilterCounts();
+            updateAuthUI();
+
+            // Устанавливаем сегодняшнюю дату по умолчанию
+            document.getElementById('complaintDate').valueAsDate = new Date();
+
+            // Инициализация нескольких тестовых жалоб
+            if (complaints.length === 0) {
+                const sampleComplaints = [
+                    {
+                        id: 1,
+                        title: 'Разбитая дорога на ул. Центральной',
+                        category: 'roads',
+                        description: 'На участке дороги от дома 15 до дома 25 образовалась большая яма, которая создает опасность для движения транспорта.',
+                        address: 'ул. Центральная, д. 15-25',
+                        date: '2026-01-15',
+                        contact: '',
+                        status: 'confirmed',
+                        votes: 24,
+                        voters: [],
+                        createdAt: '2026-01-15T10:30:00Z',
+                        updatedAt: '2026-01-20T14:45:00Z'
+                    },
+                    {
+                        id: 2,
+                        title: 'Не вывозят мусор из контейнерной площадки',
+                        category: 'garbage',
+                        description: 'Мусор не вывозится уже 5 дней, контейнеры переполнены, распространяется неприятный запах.',
+                        address: 'ул. Зеленая, д. 42',
+                        date: '2026-01-18',
+                        contact: 'user@example.com',
+                        status: 'new',
+                        votes: 15,
+                        voters: [],
+                        createdAt: '2026-01-18T09:15:00Z',
+                        updatedAt: '2026-01-18T09:15:00Z'
+                    }
+                ];
+
+                complaints = sampleComplaints;
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+                updateStats();
+                updateFilterCounts();
+                renderComplaints();
+            }
+        });
+
+        // Обновление интерфейса авторизации
+        function updateAuthUI() {
+            const authButtonsContainer = document.getElementById('authButtonsContainer');
+
+            if (currentUser) {
+                authButtonsContainer.innerHTML = `
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            ${currentUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span>${currentUser.name}</span>
+                        <button type="button" class="logout-btn" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Выйти
+                        </button>
+                    </div>
+                `;
+            } else {
+                authButtonsContainer.innerHTML = `
+                    <button type="button" class="login-btn" onclick="openModal('loginModal')">Войти</button>
+                    <button type="button" class="register-btn" onclick="openModal('registerModal')">Регистрация</button>
+                `;
+            }
+        }
+
+        // Функции работы с модальными окнами
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            if (modalId === 'addComplaintModal') {
+                resetComplaintForm();
+            }
+            clearErrors(modalId);
+        }
+
+        // Очистка ошибок
+        function clearErrors(modalId) {
+            const modal = document.getElementById(modalId);
+            const inputs = modal.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.classList.remove('error');
+                const errorId = input.id + 'Error';
+                const errorElement = document.getElementById(errorId);
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            });
+        }
+
+        // Выбор категории для жалобы
+        function selectCategory(category) {
+            selectedCategory = category;
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`.category-option[data-category="${category}"]`).classList.add('selected');
+            document.getElementById('selectedCategory').value = category;
+            hideError('selectedCategory');
+        }
+
+        // Сброс формы жалобы
+        function resetComplaintForm() {
+            document.getElementById('addComplaintForm').reset();
+            selectedCategory = '';
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.getElementById('complaintDate').valueAsDate = new Date();
+        }
+
+        // Показать/скрыть ошибки
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId + 'Error');
+            const inputElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            if (inputElement) {
+                inputElement.classList.add('error');
+            }
+        }
+
+        function hideError(elementId) {
+            const errorElement = document.getElementById(elementId + 'Error');
+            const inputElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+            if (inputElement) {
+                inputElement.classList.remove('error');
+            }
+        }
+
+        // Валидация email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Обработка входа
+        function submitLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            let isValid = true;
+
+            if (!validateEmail(email)) {
+                showError('loginEmail', 'Пожалуйста, введите корректный email');
+                isValid = false;
+            }
+
+            if (password.length < 6) {
+                showError('loginPassword', 'Пароль должен содержать не менее 6 символов');
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Здесь должна быть отправка данных на сервер
+                // Для демо просто создаем пользователя
+                currentUser = {
+                    name: email.split('@')[0],
+                    email: email
+                };
+
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Обновляем интерфейс
+                updateAuthUI();
+                closeModal('loginModal');
+
+                // Показываем уведомление
+                alert('Вход выполнен успешно!');
+            }
+        }
+
+        // Обработка регистрации
+        function submitRegister() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            let isValid = true;
+
+            if (name.length < 2) {
+                showError('registerName', 'Имя должно содержать не менее 2 символов');
+                isValid = false;
+            }
+
+            if (!validateEmail(email)) {
+                showError('registerEmail', 'Пожалуйста, введите корректный email');
+                isValid = false;
+            }
+
+            if (password.length < 8) {
+                showError('registerPassword', 'Пароль должен содержать не менее 8 символов');
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                showError('registerConfirmPassword', 'Пароли не совпадают');
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Здесь должна быть отправка данных на сервер
+                currentUser = {
+                    name: name,
+                    email: email
+                };
+
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                // Обновляем интерфейс
+                updateAuthUI();
+                closeModal('registerModal');
+
+                // Показываем уведомление
+                alert('Регистрация выполнена успешно!');
+            }
+        }
+
+        // Восстановление пароля
+        function submitForgotPassword() {
+            const email = document.getElementById('forgotEmail').value;
+
+            if (!validateEmail(email)) {
+                showError('forgotEmail', 'Пожалуйста, введите корректный email');
+                return;
+            }
+
+            // Здесь должна быть отправка данных на сервер
+            alert('Инструкции по восстановлению пароля отправлены на вашу почту!');
+            closeModal('forgotPasswordModal');
+        }
+
+        // Переключение между формами
+        function switchToRegister() {
+            closeModal('loginModal');
+            setTimeout(() => openModal('registerModal'), 300);
+        }
+
+        function switchToLogin() {
+            closeModal('registerModal');
+            setTimeout(() => openModal('loginModal'), 300);
+        }
+
+        function showForgotPassword() {
+            closeModal('loginModal');
+            setTimeout(() => openModal('forgotPasswordModal'), 300);
+        }
+
+        // Выход из системы
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateAuthUI();
+            alert('Вы успешно вышли из системы.');
+        }
+
+        // Отправка жалобы
+        function submitComplaint() {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите или зарегистрируйтесь, чтобы добавить жалобу.');
+                openModal('loginModal');
+                return;
+            }
+
+            const title = document.getElementById('complaintTitle').value.trim();
+            const description = document.getElementById('complaintDescription').value.trim();
+            const address = document.getElementById('complaintAddress').value.trim();
+            const date = document.getElementById('complaintDate').value;
+            const contact = document.getElementById('complaintContact').value.trim();
+
+            let isValid = true;
+
+            // Валидация
+            if (!title || title.length > 100) {
+                showError('title', 'Заголовок обязателен и должен содержать до 100 символов');
+                isValid = false;
+            }
+
+            if (!selectedCategory) {
+                showError('category', 'Пожалуйста, выберите категорию');
+                isValid = false;
+            }
+
+            if (!description || description.length > 1000) {
+                showError('description', 'Описание обязательно и должно содержать до 1000 символов');
+                isValid = false;
+            }
+
+            if (!address) {
+                showError('address', 'Пожалуйста, введите адрес');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Создание новой жалобы
+            const newComplaint = {
+                id: Date.now(),
+                title: title,
+                category: selectedCategory,
+                description: description,
+                address: address,
+                date: date || new Date().toISOString().split('T')[0],
+                contact: contact,
+                userId: currentUser.email,
+                userName: currentUser.name,
+                status: 'new',
+                votes: 0,
+                voters: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            // Добавление в массив
+            complaints.unshift(newComplaint);
+
+            // Сохранение в localStorage
+            localStorage.setItem('complaints', JSON.stringify(complaints));
+
+            // Обновление интерфейса
+            updateStats();
+            updateFilterCounts();
+            renderComplaints();
+
+            // Закрытие модального окна и показ сообщения
+            closeModal('addComplaintModal');
+
+            // Показать уведомление
+            alert('Жалоба успешно добавлена! Она появится в общем списке после модерации.');
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const total = complaints.length;
+            const fixed = complaints.filter(c => c.status === 'fixed').length;
+
+            document.getElementById('totalComplaints').textContent = total;
+            document.getElementById('fixedComplaints').textContent = fixed;
+        }
+
+        // Обновление счетчиков в фильтрах
+        function updateFilterCounts() {
+            const categories = ['all', 'roads', 'garbage', 'lighting', 'water', 'transport', 'housing', 'greenery', 'other'];
+
+            categories.forEach(category => {
+                let count;
+                if (category === 'all') {
+                    count = complaints.length;
+                } else {
+                    count = complaints.filter(c => c.category === category).length;
+                }
+                const element = document.getElementById(`count-${category}`);
+                if (element) {
+                    element.textContent = count;
+                }
+            });
+        }
+
+        // Отображение жалоб
+        function renderComplaints(filteredComplaints = complaints) {
+            const container = document.getElementById('complaintsList');
+            const noComplaints = document.getElementById('noComplaints');
+
+            if (filteredComplaints.length === 0) {
+                container.innerHTML = '';
+                noComplaints.style.display = 'block';
+                return;
+            }
+
+            noComplaints.style.display = 'none';
+
+            // Сортировка
+            let sortedComplaints = [...filteredComplaints];
+            switch (currentSort) {
+                case 'new':
+                    sortedComplaints.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'popular':
+                    sortedComplaints.sort((a, b) => b.votes - a.votes);
+                    break;
+                case 'updated':
+                    sortedComplaints.sort((a, b) => new Date(b.updatedAt) - new Date(a.createdAt));
+                    break;
+            }
+
+            container.innerHTML = sortedComplaints.map(complaint => createComplaintCard(complaint)).join('');
+        }
+
+        // Создание карточки жалобы
+        function createComplaintCard(complaint) {
+            const categoryIcons = {
+                'roads': 'fa-road',
+                'garbage': 'fa-trash',
+                'lighting': 'fa-lightbulb',
+                'water': 'fa-tint',
+                'transport': 'fa-bus',
+                'housing': 'fa-building',
+                'greenery': 'fa-tree',
+                'other': 'fa-question-circle'
+            };
+
+            const categoryNames = {
+                'roads': 'Дороги',
+                'garbage': 'Мусор',
+                'lighting': 'Освещение',
+                'water': 'Вода',
+                'transport': 'Транспорт',
+                'housing': 'ЖКХ',
+                'greenery': 'Озеленение',
+                'other': 'Другое'
+            };
+
+            const statusIcons = {
+                'new': 'fa-clock',
+                'confirmed': 'fa-check-circle',
+                'in_progress': 'fa-tools',
+                'fixed': 'fa-check',
+                'rejected': 'fa-times-circle'
+            };
+
+            const statusColors = {
+                'new': '#e74c3c',
+                'confirmed': '#f39c12',
+                'in_progress': '#3498db',
+                'fixed': '#27ae60',
+                'rejected': '#95a5a6'
+            };
+
+            const statusNames = {
+                'new': 'Новая',
+                'confirmed': 'Подтверждена',
+                'in_progress': 'В работе',
+                'fixed': 'Исправлено',
+                'rejected': 'Отклонена'
+            };
+
+            return `
+                <div class="complaint-card" data-category="${complaint.category}" data-status="${complaint.status}">
+                    <div class="complaint-header">
+                        <div class="complaint-category" style="background: rgba(30, 144, 255, 0.1); color: #1e90ff;">
+                            <i class="fas ${categoryIcons[complaint.category]}"></i>
+                            ${categoryNames[complaint.category]}
+                        </div>
+                        <div class="complaint-status" style="background: ${statusColors[complaint.status]}20; color: ${statusColors[complaint.status]}">
+                            <i class="fas ${statusIcons[complaint.status]}"></i>
+                            ${statusNames[complaint.status]}
+                        </div>
+                    </div>
+
+                    <h3 class="complaint-title">${complaint.title}</h3>
+
+                    <p class="complaint-description">${complaint.description}</p>
+
+                    <div class="complaint-address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        ${complaint.address}
+                    </div>
+
+                    <div class="complaint-date">
+                        <i class="far fa-calendar"></i>
+                        ${new Date(complaint.date).toLocaleDateString('ru-RU')}
+                    </div>
+
+                    <div class="complaint-footer">
+                        <button class="vote-btn" onclick="voteComplaint(${complaint.id})">
+                            <i class="fas fa-thumbs-up"></i>
+                            Поддерживаю
+                            <span class="vote-count">${complaint.votes}</span>
+                        </button>
+
+                        <div class="complaint-actions">
+                            <button class="action-btn" onclick="shareComplaint(${complaint.id})">
+                                <i class="fas fa-share-alt"></i>
+                                Поделиться
+                            </button>
+                            <button class="action-btn" onclick="showComplaintDetails(${complaint.id})">
+                                <i class="fas fa-info-circle"></i>
+                                Подробнее
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Фильтрация по категории
+        function filterComplaints(category) {
+            currentFilter = category;
+
+            // Обновление активного класса
+            document.querySelectorAll('.filter-list .filter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Применение фильтра
+            applyFilters();
+        }
+
+        // Фильтрация по статусу
+        function filterByStatus(status) {
+            currentStatus = status;
+
+            // Обновление активного класса
+            const statusList = event.currentTarget.parentElement;
+            statusList.querySelectorAll('.filter-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Применение фильтра
+            applyFilters();
+        }
+
+        // Применение всех фильтров
+        function applyFilters() {
+            let filtered = complaints;
+
+            // Фильтр по категории
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(c => c.category === currentFilter);
+            }
+
+            // Фильтр по статусу
+            if (currentStatus !== 'all') {
+                filtered = filtered.filter(c => c.status === currentStatus);
+            }
+
+            renderComplaints(filtered);
+        }
+
+        // Сортировка
+        function sortComplaints(sortType) {
+            currentSort = sortType;
+
+            // Обновление активного класса
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            applyFilters();
+        }
+
+        // Поиск
+        function searchComplaints() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            if (!searchTerm) {
+                applyFilters();
+                return;
+            }
+
+            let filtered = complaints.filter(complaint =>
+                complaint.title.toLowerCase().includes(searchTerm) ||
+                complaint.description.toLowerCase().includes(searchTerm) ||
+                complaint.address.toLowerCase().includes(searchTerm)
+            );
+
+            renderComplaints(filtered);
+        }
+
+        // Голосование за жалобу
+        function voteComplaint(id) {
+            if (!currentUser) {
+                alert('Пожалуйста, войдите, чтобы голосовать за жалобы.');
+                openModal('loginModal');
+                return;
+            }
+
+            const complaint = complaints.find(c => c.id === id);
+
+            if (complaint) {
+                // Проверка, голосовал ли уже пользователь
+                const hasVoted = localStorage.getItem(`voted_${id}_${currentUser.email}`);
+
+                if (hasVoted) {
+                    alert('Вы уже голосовали за эту жалобу!');
+                    return;
+                }
+
+                complaint.votes++;
+                complaint.updatedAt = new Date().toISOString();
+
+                // Сохраняем голос
+                localStorage.setItem(`voted_${id}_${currentUser.email}`, 'true');
+                localStorage.setItem('complaints', JSON.stringify(complaints));
+
+                // Обновляем отображение
+                applyFilters();
+                alert('Ваш голос учтен! Спасибо за участие.');
+            }
+        }
+
+        // Поделиться жалобой
+        function shareComplaint(id) {
+            const complaint = complaints.find(c => c.id === id);
+
+            if (complaint) {
+                const text = `Жалоба: ${complaint.title}\nАдрес: ${complaint.address}\n\nПомогите решить проблему в нашем городе!`;
+                const url = window.location.href;
+
+                if (navigator.share) {
+                    navigator.share({
+                        title: complaint.title,
+                        text: text,
+                        url: url
+                    });
+                } else {
+                    navigator.clipboard.writeText(text + '\n' + url).then(() => {
+                        alert('Текст жалобы скопирован в буфер обмена!');
+                    });
+                }
+            }
+        }
+
+        // Показать детали жалобы
+        function showComplaintDetails(id) {
+            const complaint = complaints.find(c => c.id === id);
+
+            if (complaint) {
+                alert(`Детали жалобы:\n\nЗаголовок: ${complaint.title}\nКатегория: ${complaint.category}\nСтатус: ${complaint.status}\nАдрес: ${complaint.address}\nДата: ${complaint.date}\n\nОписание:\n${complaint.description}\n\nГолосов: ${complaint.votes}\n\nID жалобы: ${complaint.id}`);
+            }
+        }
+
+        // Закрытие по клику вне модального окна
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal(this.id);
+                }
+            });
+        });
+
+        // Закрытие по ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    if (modal.style.display === 'flex') {
+                        closeModal(modal.id);
+                    }
+                });
+            }
+        });
+
+        // Обработка Enter в поле поиска
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchComplaints();
+            }
+        });
+    </script>
+</body>
+</html>
