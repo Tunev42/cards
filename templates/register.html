@@ -1,0 +1,647 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container register-container">
+    <div class="register-card">
+        <!-- Заголовок -->
+        <div class="register-header">
+            <h1><i class="fas fa-user-plus"></i> Регистрация</h1>
+            <p class="register-subtitle">Создайте новый аккаунт</p>
+        </div>
+
+        <!-- Сообщения об ошибках/успехе -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible">
+                        {{ message }}
+                        <button type="button" class="close" onclick="this.parentElement.style.display='none'">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Форма регистрации -->
+        <form method="POST" action="{{ url_for('register') }}" class="register-form">
+            <!-- Имя пользователя -->
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> Имя пользователя *
+                </label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       class="form-control"
+                       placeholder="Придумайте логин (от 3 символов)"
+                       required
+                       minlength="3"
+                       value="{{ request.form.username if request.form else '' }}"
+                       oninput="checkUsername()">
+                <div class="form-hint">Минимум 3 символа, латинские буквы и цифры</div>
+                <div id="username-feedback" class="feedback"></div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email (необязательно)
+                </label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-control"
+                       placeholder="example@mail.com"
+                       value="{{ request.form.email if request.form else '' }}">
+                <div class="form-hint">Для восстановления пароля и уведомлений</div>
+            </div>
+
+            <!-- Пароль -->
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Пароль *
+                </label>
+                <div class="password-input">
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Придумайте пароль"
+                           required
+                           minlength="6"
+                           oninput="validatePassword()">
+                    <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="password-strength"></div>
+                    </div>
+                    <div class="strength-text" id="strength-text">Сложность пароля</div>
+                </div>
+                <div class="password-requirements">
+                    <ul>
+                        <li id="req-length"><i class="fas fa-check"></i> Не менее 6 символов</li>
+                        <li id="req-uppercase"><i class="fas fa-check"></i> Хотя бы одна заглавная буква</li>
+                        <li id="req-lowercase"><i class="fas fa-check"></i> Хотя бы одна строчная буква</li>
+                        <li id="req-number"><i class="fas fa-check"></i> Хотя бы одна цифра</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Подтверждение пароля -->
+            <div class="form-group">
+                <label for="confirm_password">
+                    <i class="fas fa-lock"></i> Подтверждение пароля *
+                </label>
+                <div class="password-input">
+                    <input type="password"
+                           id="confirm_password"
+                           name="confirm_password"
+                           class="form-control"
+                           placeholder="Повторите пароль"
+                           required
+                           oninput="validateConfirmPassword()">
+                    <button type="button" class="toggle-password" onclick="togglePassword('confirm_password')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div id="confirm-feedback" class="feedback"></div>
+            </div>
+
+            <!-- Правила и условия -->
+            <div class="form-group terms-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="agree_terms" id="agree_terms" required>
+                    <span class="checkmark"></span>
+                    Я согласен с <a href="{{ url_for('rules') }}" target="_blank">правилами использования</a>
+                    и обработкой персональных данных
+                </label>
+            </div>
+
+            <!-- Кнопка регистрации -->
+            <button type="submit" class="btn-register" id="submit-btn">
+                <i class="fas fa-user-plus"></i> Зарегистрироваться
+            </button>
+
+            <!-- Ссылки -->
+            <div class="register-links">
+                <a href="{{ url_for('login') }}" class="register-link">
+                    <i class="fas fa-sign-in-alt"></i> Уже есть аккаунт? Войдите
+                </a>
+                <a href="{{ url_for('index') }}" class="register-link">
+                    <i class="fas fa-home"></i> Вернуться на главную
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    padding: 20px;
+}
+
+.register-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.register-header h1 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 28px;
+}
+
+.register-subtitle {
+    color: #7f8c8d;
+    font-size: 16px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group label i {
+    margin-right: 8px;
+    color: #3498db;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.form-control.error {
+    border-color: #e74c3c;
+}
+
+.form-control.success {
+    border-color: #27ae60;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #7f8c8d;
+    margin-top: 5px;
+}
+
+.feedback {
+    font-size: 13px;
+    margin-top: 5px;
+    min-height: 20px;
+}
+
+.feedback.error {
+    color: #e74c3c;
+}
+
+.feedback.success {
+    color: #27ae60;
+}
+
+.password-input {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #7f8c8d;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 5px;
+}
+
+.toggle-password:hover {
+    color: #3498db;
+}
+
+.password-strength {
+    margin-top: 10px;
+}
+
+.strength-bar {
+    height: 6px;
+    background: #ecf0f1;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    background: #e74c3c;
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+
+.strength-text {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+.password-requirements {
+    margin-top: 10px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.password-requirements li i {
+    margin-right: 8px;
+    font-size: 10px;
+}
+
+.password-requirements li.valid {
+    color: #27ae60;
+}
+
+.password-requirements li.invalid {
+    color: #bdc3c7;
+}
+
+.terms-group {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.terms-group label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 14px;
+    color: #5a6268;
+    margin: 0;
+}
+
+.terms-group a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.terms-group a:hover {
+    text-decoration: underline;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #5a6268;
+}
+
+.checkbox-label input {
+    display: none;
+}
+
+.checkmark {
+    min-width: 20px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #bdc3c7;
+    border-radius: 4px;
+    margin-right: 10px;
+    position: relative;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.checkbox-label input:checked + .checkmark {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.checkbox-label input:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-register {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #27ae60, #219653);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-register:hover {
+    background: linear-gradient(135deg, #219653, #1e874b);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.btn-register:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-register:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.register-links {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.register-link {
+    display: block;
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+.register-link:hover {
+    color: #1f6395;
+    text-decoration: underline;
+}
+
+.register-link i {
+    margin-right: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 600px) {
+    .register-card {
+        padding: 25px;
+    }
+
+    .register-header h1 {
+        font-size: 24px;
+    }
+
+    .form-control {
+        padding: 10px 14px;
+    }
+
+    .password-requirements {
+        padding: 10px;
+    }
+}
+</style>
+
+<script>
+// Показать/скрыть пароль
+function togglePassword(fieldId) {
+    const passwordInput = document.getElementById(fieldId);
+    const toggleIcon = document.querySelector(`#${fieldId} + .toggle-password i`);
+
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.className = 'fas fa-eye-slash';
+    } else {
+        passwordInput.type = 'password';
+        toggleIcon.className = 'fas fa-eye';
+    }
+}
+
+// Проверка имени пользователя
+function checkUsername() {
+    const username = document.getElementById('username').value;
+    const feedback = document.getElementById('username-feedback');
+    const input = document.getElementById('username');
+
+    if (username.length < 3) {
+        feedback.textContent = 'Имя пользователя слишком короткое';
+        feedback.className = 'feedback error';
+        input.classList.add('error');
+        input.classList.remove('success');
+        return false;
+    }
+
+    // Проверка на допустимые символы
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(username)) {
+        feedback.textContent = 'Можно использовать только латинские буквы, цифры и подчёркивание';
+        feedback.className = 'feedback error';
+        input.classList.add('error');
+        input.classList.remove('success');
+        return false;
+    }
+
+    // Проверка доступности через AJAX (если нужно)
+    // fetch(`/api/check_username/${username}`)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.available) {
+    //             feedback.textContent = 'Имя пользователя доступно';
+    //             feedback.className = 'feedback success';
+    //             input.classList.add('success');
+    //             input.classList.remove('error');
+    //         } else {
+    //             feedback.textContent = 'Имя пользователя уже занято';
+    //             feedback.className = 'feedback error';
+    //             input.classList.add('error');
+    //             input.classList.remove('success');
+    //         }
+    //     });
+
+    feedback.textContent = 'Имя пользователя корректно';
+    feedback.className = 'feedback success';
+    input.classList.add('success');
+    input.classList.remove('error');
+    return true;
+}
+
+// Валидация пароля
+function validatePassword() {
+    const password = document.getElementById('password').value;
+    const strengthBar = document.getElementById('password-strength');
+    const strengthText = document.getElementById('strength-text');
+
+    let strength = 0;
+
+    // Проверка длины
+    const lengthValid = password.length >= 6;
+    document.getElementById('req-length').className = lengthValid ? 'valid' : 'invalid';
+    if (lengthValid) strength += 25;
+
+    // Проверка на заглавные буквы
+    const hasUpperCase = /[A-Z]/.test(password);
+    document.getElementById('req-uppercase').className = hasUpperCase ? 'valid' : 'invalid';
+    if (hasUpperCase) strength += 25;
+
+    // Проверка на строчные буквы
+    const hasLowerCase = /[a-z]/.test(password);
+    document.getElementById('req-lowercase').className = hasLowerCase ? 'valid' : 'invalid';
+    if (hasLowerCase) strength += 25;
+
+    // Проверка на цифры
+    const hasNumbers = /\d/.test(password);
+    document.getElementById('req-number').className = hasNumbers ? 'valid' : 'invalid';
+    if (hasNumbers) strength += 25;
+
+    // Обновление индикатора сложности
+    strengthBar.style.width = strength + '%';
+
+    if (strength === 0) {
+        strengthBar.style.backgroundColor = '#ecf0f1';
+        strengthText.textContent = 'Введите пароль';
+    } else if (strength <= 25) {
+        strengthBar.style.backgroundColor = '#e74c3c';
+        strengthText.textContent = 'Слабый';
+    } else if (strength <= 50) {
+        strengthBar.style.backgroundColor = '#f39c12';
+        strengthText.textContent = 'Средний';
+    } else if (strength <= 75) {
+        strengthBar.style.backgroundColor = '#3498db';
+        strengthText.textContent = 'Хороший';
+    } else {
+        strengthBar.style.backgroundColor = '#27ae60';
+        strengthText.textContent = 'Отличный';
+    }
+
+    // Проверка подтверждения пароля
+    validateConfirmPassword();
+
+    return strength >= 50; // Минимальная сложность
+}
+
+// Проверка подтверждения пароля
+function validateConfirmPassword() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const feedback = document.getElementById('confirm-feedback');
+    const input = document.getElementById('confirm_password');
+
+    if (confirmPassword === '') {
+        feedback.textContent = '';
+        input.classList.remove('error', 'success');
+        return false;
+    }
+
+    if (password === confirmPassword) {
+        feedback.textContent = 'Пароли совпадают';
+        feedback.className = 'feedback success';
+        input.classList.add('success');
+        input.classList.remove('error');
+        return true;
+    } else {
+        feedback.textContent = 'Пароли не совпадают';
+        feedback.className = 'feedback error';
+        input.classList.add('error');
+        input.classList.remove('success');
+        return false;
+    }
+}
+
+// Валидация формы перед отправкой
+function validateForm() {
+    const usernameValid = checkUsername();
+    const passwordValid = validatePassword();
+    const confirmValid = validateConfirmPassword();
+    const termsChecked = document.getElementById('agree_terms').checked;
+
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (usernameValid && passwordValid && confirmValid && termsChecked) {
+        submitBtn.disabled = false;
+        return true;
+    } else {
+        submitBtn.disabled = true;
+        return false;
+    }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    // Автофокус на поле username
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.focus();
+    }
+
+    // Добавляем обработчики событий
+    document.getElementById('username').addEventListener('input', validateForm);
+    document.getElementById('password').addEventListener('input', validateForm);
+    document.getElementById('confirm_password').addEventListener('input', validateForm);
+    document.getElementById('agree_terms').addEventListener('change', validateForm);
+
+    // Инициализируем валидацию
+    validateForm();
+});
+</script>
+{% endblock %}

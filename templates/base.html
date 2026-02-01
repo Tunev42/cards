@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инфо-город - Портал жалоб и предложений</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Шапка */
+        .header {
+            background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 100%);
+            padding: 20px 0;
+            border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffa502;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .add-complaint-btn {
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s;
+        }
+
+        .add-complaint-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-btn, .register-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn {
+            background: transparent;
+            border: 2px solid #444;
+            color: #fff;
+        }
+
+        .register-btn {
+            background: linear-gradient(90deg, #1e90ff, #3742fa);
+            border: none;
+            color: white;
+        }
+
+        .login-btn:hover {
+            border-color: #ff4757;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Основной контент */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 25px;
+            padding: 30px 0;
+        }
+
+        /* Левая панель - фильтры */
+        .sidebar-left {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #333;
+        }
+
+        .filter-section {
+            margin-bottom: 30px;
+        }
+
+        .filter-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .filter-title i {
+            color: #ffa502;
+        }
+
+        .filter-list {
+            list-style: none;
+        }
+
+        .filter-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background-color: #252525;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .filter-item:hover {
+            background-color: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .filter-item.active {
+            background: linear-gradient(90deg, #252525, #333);
+            border-left: 3px solid #ff4757;
+        }
+
+        .filter-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .filter-count {
+            background-color: #333;
+            color: #ffa502;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .filter-item.active .filter-count {
+            background-color: #ff4757;
+            color: white;
+        }
+
+        .sorting-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sort-btn {
+            background-color: #252525;
+            border: none;
+            color: #ccc;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sort-btn:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .sort-btn.active {
+            background: linear-gradient(90deg, #252525, #333);
+            color: #ffa502;
+            border-left: 3px solid #ffa502;
+        }
+
+        /* Центральная часть - жалобы */
+        .content-center {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .search-bar {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            background-color: #252525;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff4757;
+        }
+
+        .search-btn {
+            background: linear-gradient(90deg, #ff4757, #ff6b81);
+            border: none;
+            color: white;
+            padding: 0 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .complaints-container {
+            background: linear-gradient(135deg, #1a1a1a, #252525);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #333;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-complaints {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .no-complaints-icon {
+            font-size: 60px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .no-complaints-title {
+            font-size: 24px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+
+        .no-complaints-text {
+            color: #666;
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        /* Футер */
+        .footer {
+            background: linear-gradient(90deg, #1a1a1a, #2a2a2a);
+            padding: 40px 0 20px;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .footer-info {
+            max-width: 400px;
+        }
+
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff6b6b, #ffa502);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .footer-description {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-column h4 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 8px;
+        }
+
+        .footer-column a {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: #ffa502;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .copyright {
+            color: #aaa;
+        }
+
+        .footer-tip {
+            background-color: #252525;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .header-stats {
+                order: 3;
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .login-btn, .register-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-city"></i>
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">Инфо-город</div>
+                        <div class="logo-subtitle">Портал жалоб и предложений</div>
+                    </div>
+                </div>
+
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">1,254</div>
+                        <div class="stat-label">Жалоб всего</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">328</div>
+                        <div class="stat-label">Исправлено</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">★ Рейтинг</div>
+                    </div>
+                </div>
+
+                <div class="user-actions">
+                    <button class="add-complaint-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        Добавить жалобу
+                    </button>
+                    <div class="auth-buttons">
+                        <button class="login-btn">Войти</button>
+                        <button class="register-btn">Регистрация</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Левая панель - фильтры -->
+            <aside class="sidebar-left">
+                <!-- Категории -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-tags"></i>
+                        Категории
+                    </h3>
+                    <ul class="filter-list">
+                        <li class="filter-item active">
+                            <span class="filter-name">
+                                <i class="fas fa-layer-group"></i>
+                                Все категории
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-road"></i>
+                                Дороги
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-trash"></i>
+                                Мусор
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-lightbulb"></i>
+                                Освещение
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-tint"></i>
+                                Вода
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-bus"></i>
+                                Транспорт
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-building"></i>
+                                ЖКХ
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-tree"></i>
+                                Озеленение
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-question-circle"></i>
+                                Другое
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Статусы -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-flag"></i>
+                        Статусы
+                    </h3>
+                    <ul class="filter-list">
+                        <li class="filter-item active">
+                            <span class="filter-name">
+                                <i class="fas fa-list"></i>
+                                Все статусы
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-clock" style="color: #e74c3c"></i>
+                                Новая
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-check-circle" style="color: #f39c12"></i>
+                                Подтверждена
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-tools" style="color: #3498db"></i>
+                                В работе
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-check" style="color: #27ae60"></i>
+                                Исправлено
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                        <li class="filter-item">
+                            <span class="filter-name">
+                                <i class="fas fa-times-circle" style="color: #95a5a6"></i>
+                                Отклонена
+                            </span>
+                            <span class="filter-count">0</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Сортировка -->
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-sort-amount-down"></i>
+                        Сортировка
+                    </h3>
+                    <div class="sorting-options">
+                        <button class="sort-btn active">
+                            <i class="fas fa-fire"></i>
+                            Сначала новые
+                        </button>
+                        <button class="sort-btn">
+                            <i class="fas fa-star"></i>
+                            Популярные
+                        </button>
+                        <button class="sort-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            Недавно обновленные
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Центральная часть -->
+            <main class="content-center">
+                <!-- Поиск -->
+                <div class="search-bar">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Поиск жалоб по ключевым словам...">
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Найти
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Список жалоб -->
+                <div class="complaints-container">
+                    <div class="no-complaints">
+                        <div class="no-complaints-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3 class="no-complaints-title">Жалоб по выбранным фильтрам нет</h3>
+                        <p class="no-complaints-text">
+                            Попробуйте изменить фильтры или станьте первым, кто добавит жалобу в этой категории.
+                            Ваше мнение поможет улучшить наш город!
+                        </p>
+                        <button class="add-complaint-btn">
+                            <i class="fas fa-plus-circle"></i>
+                            Добавить первую жалобу
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-info">
+                    <div class="footer-logo">Инфо-город</div>
+                    <p class="footer-description">
+                        Платформа для взаимодействия граждан с городскими службами.
+                        Сообщайте о проблемах, отслеживайте статус решений и участвуйте
+                        в улучшении нашего города.
+                    </p>
+                    <p class="copyright">© 2026 Инфо-город. Все права защищены.</p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>О проекте</h4>
+                        <ul>
+                            <li><a href="#">О нас</a></li>
+                            <li><a href="#">Как это работает</a></li>
+                            <li><a href="#">Статистика</a></li>
+                            <li><a href="#">Новости</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Полезное</h4>
+                        <ul>
+                            <li><a href="#">Правила</a></li>
+                            <li><a href="#">FAQ</a></li>
+                            <li><a href="#">Контакты</a></li>
+                            <li><a href="#">Поддержка</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="footer-tip">
+                    Для фильтрации жалоб используйте кнопки категорий и статусов
+                </div>
+                <div class="footer-links-row">
+                    <a href="#">О проекте</a> |
+                    <a href="#">Правила</a> |
+                    <a href="#">Контакты</a>
+                </div>
+            </div>
+        </div>
+<!-- Модальное окно уведомления -->
+<div class="modal-overlay" id="notificationModal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-exclamation-circle"></i> Уведомление от сайта 127.0.0.1</h3>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>Форма регистрации откроется здесь</p>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn close-btn" onclick="closeModal()">
+                <i class="fas fa-times"></i> Закрыть
+            </button>
+            <button class="modal-btn find-btn" onclick="closeModal()">
+                <i class="fas fa-search"></i> Найти
+            </button>
+        </div>
+    </div>
+</div>
+    </footer>
+
+    <script>
+        // Взаимодействие с фильтрами
+        document.querySelectorAll('.filter-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Убираем активный класс у всех элементов в этой группе
+                const parentList = this.parentElement;
+                parentList.querySelectorAll('.filter-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                // Добавляем активный класс к текущему элементу
+                this.classList.add('active');
+            });
+        });
+
+        // Взаимодействие с кнопками сортировки
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.sort-btn').forEach(b => {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Кнопка "Добавить жалобу"
+        document.querySelectorAll('.add-complaint-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('Форма добавления новой жалобы откроется здесь');
+                // В реальном приложении здесь будет открытие модального окна или переход на страницу
+            });
+        });
+
+        // Кнопки авторизации
+        document.querySelector('.login-btn').addEventListener('click', function() {
+            alert('Форма входа откроется здесь');
+        });
+
+        document.querySelector('.register-btn').addEventListener('click', function() {
+            alert('Форма регистрации откроется здесь');
+        });
+    </script>
+</body>
+</html>
